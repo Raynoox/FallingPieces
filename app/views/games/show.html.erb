@@ -1,4 +1,7 @@
-
+<div id="game">
+<script type="text/javascript">
+  start_listening(<%=@game.id%>);
+</script>
 <p>
   <strong>Title:</strong>
   <%= @game.title %>
@@ -12,3 +15,4 @@
 <button onclick="join_game(<%=@game.id%>,<%=i%>)">Player <%=i%></button>
 <% end %>
 <%= link_to 'Back', games_path %>
+<div>

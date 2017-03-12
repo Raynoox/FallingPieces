@@ -15,7 +15,7 @@
 //= require turbolinks
 //= require_tree .
 //= require websocket_rails/main
-
+var channel;
 var dispatcher = new WebSocketRails('localhost:3000/websocket');
 dispatcher.on_open = function(data) {
   console.log('Connection has been established: ', data);
@@ -24,12 +24,29 @@ dispatcher.on_open = function(data) {
 dispatcher.bind('connection_closed', function(data) {
   console.log('connection is closed');
 });
-dispatcher.bind('player_joined', function(data) {
+/*dispatcher.bind('player_joined', function(data) {
   console.log('someone joined game');
   console.log(data);
-});
+});*/
 var join_game = function(gameId, playerId) {
   console.log("gameid = " +gameId);
   console.log("playerId = " +playerId);
-  dispatcher.trigger('join_game',{gameId: gameId, playerId: playerId});
+  sessionStorage.setItem('game',gameId);
+  sessionStorage.setItem('player',playerId);
+  channel.trigger('join_game',{gameId: gameId, playerId: playerId});
+  channel.trigger('player_joined',{gameId: gameId, playerId: playerId});
+}
+var start_listening = function(gameId) {
+  console.log("start_listening on game "+gameId)
+  channel = dispatcher.subscribe('game'+gameId)
+  channel.bind('player_joined', function(data) {
+    console.log('player joined to channel: '+data);
+  });
+  if(Number(sessionStorage.getItem('game')) === gameId) {
+    console.log("restoring game "+gameId);
+    join_game(Number(sessionStorage.getItem('game')), Number(sessionStorage.getItem('player')));
+  } else {
+    sessionStorage.removeItem('game');
+    sessionStorage.removeItem('player');
+  }
 }
