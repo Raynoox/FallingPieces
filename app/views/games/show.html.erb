@@ -3,9 +3,12 @@
   <strong>Title:</strong>
   <%= @game.title %>
 </p>
- 
+
 <p>
   <strong>Players:</strong>
   <%= @game.players %>
 </p>
+<% for i in 1..@game.players do %>
+<button onclick="join_game(<%=@game.id%>,<%=i%>)">Player <%=i%></button>
+<% end %>
 <%= link_to 'Back', games_path %>

@@ -14,3 +14,22 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require_tree .
+//= require websocket_rails/main
+
+var dispatcher = new WebSocketRails('localhost:3000/websocket');
+dispatcher.on_open = function(data) {
+  console.log('Connection has been established: ', data);
+  // You can trigger new server events inside this callback if you wish.
+}
+dispatcher.bind('connection_closed', function(data) {
+  console.log('connection is closed');
+});
+dispatcher.bind('player_joined', function(data) {
+  console.log('someone joined game');
+  console.log(data);
+});
+var join_game = function(gameId, playerId) {
+  console.log("gameid = " +gameId);
+  console.log("playerId = " +playerId);
+  dispatcher.trigger('join_game',{gameId: gameId, playerId: playerId});
+}
